@@ -135,6 +135,14 @@ func main() { // go对大括号的放置十分严格，仅允许这样放置
 	//	fmt.Printf("%U starts at %d\n", runeValue, idx)
 	//}
 
+	//go if else的变态要求,else必须和if的右括号在同一行，if条件必须与左括号同一行
+	//num := 0
+	//if num == 0 {
+	//	fmt.Println(num + 1)
+	//} else {
+	//	fmt.Println(num - 1)
+	//}
+
 	// switch and for loop(while lop)
 	//for true {
 	//	var i int
