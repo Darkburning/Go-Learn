@@ -1,4 +1,4 @@
-package main
+package LeetCode
 
 // No.26 easy
 func removeDuplicates(nums []int) int {
