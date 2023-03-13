@@ -1,26 +1,5 @@
 package LeetCode
 
-// No.26 easy
-func removeDuplicates(nums []int) int {
-	slow := 0
-	for fast := 0; fast < len(nums); fast++ {
-		if nums[fast] != nums[slow] {
-			slow++
-			nums[slow] = nums[fast]
-		}
-	}
-	return slow + 1
-}
-
-// No.216 easy
-func containsDuplicate(nums []int) bool {
-	myMap := make(map[int]int)
-	for i := 0; i < len(nums); i++ {
-		myMap[nums[i]] = i
-	}
-	return len(nums) != len(myMap)
-}
-
 // No.997
 func findJudge(n int, trust [][]int) int {
 	if n == len(trust) {
