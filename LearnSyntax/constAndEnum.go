@@ -13,7 +13,7 @@ const (
 	Saturday
 )
 
-// 每次都将iota对应的值左移一位
+// Flags 每次都将iota对应的值左移一位
 type Flags uint
 
 const (
