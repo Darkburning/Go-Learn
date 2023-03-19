@@ -9,7 +9,7 @@ import (
 
 // 向不同时区的两个服务器发起请求并打印响应结果
 func main() {
-	Dial(1)
+	go Dial(1)
 	Dial(2)
 }
 func Dial(i int) {

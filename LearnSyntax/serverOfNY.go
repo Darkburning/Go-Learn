@@ -28,8 +28,7 @@ func handleConn(conn net.Conn) {
 	for {
 		// 先获得对应地区再得出时间
 		newYorkTimeZone, _ := time.LoadLocation("America/New_York")
-		now := time.Now()
-		newYorkTime := now.In(newYorkTimeZone)
+		newYorkTime := time.Now().In(newYorkTimeZone)
 		_, err := io.WriteString(conn, "NewYorkTime is:"+newYorkTime.Format("15:04:05\n"))
 		if err != nil {
 			log.Print(err)

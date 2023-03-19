@@ -28,8 +28,7 @@ func handleConnection(conn net.Conn) {
 	for {
 		// 先获得对应地区再得出时间
 		londonTimeZone, _ := time.LoadLocation("Europe/London")
-		now := time.Now()
-		londonTime := now.In(londonTimeZone)
+		londonTime := time.Now().In(londonTimeZone)
 		// 往连接里写入London时间
 		_, err := io.WriteString(conn, "LondonTime is:"+londonTime.Format("15:04:05\n"))
 		if err != nil {
