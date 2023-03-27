@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hello World!</title>
+    <style>
+      h2 {
+        color: red;
+      }
+      button {
+        color: green;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>clickCounter</h2>
+    <button
+      type="button"
+      id="clickButton"
+      onclick="incrementClick(clickButton)"
+    >
+      clickMe!
+    </button>
+    <br />
+    <button type="button" onclick="resetCounter(clickButton)">reset!</button>
+    <script src="../static/click.js"></script>
+    <hr />
+    <h2>number Validation</h2>
+    <p>Please input a number between 0 and 10:</p>
+    <input id="num" />
+    <button type="button" onclick="validation()">Submit!</button>
+    <br />
+    <p id="text"></p>
+    <script src="../static/validation.js"></script>
+    <hr />
+    <hr>
+    <h2>{{.msg}}</h2>
+    <hr/>
+  </body>
+</html>
