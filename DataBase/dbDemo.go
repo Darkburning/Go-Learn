@@ -3,7 +3,6 @@ package main
 import (
 	"database/sql"
 	"fmt"
-
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -21,7 +20,7 @@ func main() {
 	}
 	fmt.Println("Successfully connected to database!")
 
-	// 往表中插入数据
+	//往表中插入数据
 	//stmt, err := db.Prepare("INSERT INTO test1 (name, number) VALUES (?, ?), (?, ?)")
 	//if err != nil {
 	//	panic(err.Error())
@@ -49,27 +48,44 @@ func main() {
 	//	fmt.Println("Rows affected:", rowsAffected)
 	//}
 	//定义要删除记录的ID
-	name := "kite"
+	//name := "kite"
+	//
+	////准备要执行的SQL语句
+	//stmt, err := db.Prepare("DELETE FROM test1 WHERE name=?")
+	//if err != nil {
+	//	panic(err.Error())
+	//}
+	//defer stmt.Close()
+	//
+	////执行SQL语句
+	//result, err := stmt.Exec(name)
+	//if err != nil {
+	//	panic(err.Error())
+	//}
+	//
+	////获取受影响的行数
+	//rowsAffected, err := result.RowsAffected()
+	//if err != nil {
+	//	panic(err.Error())
+	//}
+	//fmt.Printf("成功删除%d条记录\n", rowsAffected)
 
-	//准备要执行的SQL语句
-	stmt, err := db.Prepare("DELETE FROM test1 WHERE name=?")
+	stmt, err := db.Prepare("UPDATE test1 SET Number = ? WHERE Name = ? ")
 	if err != nil {
 		panic(err.Error())
 	}
 	defer stmt.Close()
 
-	//执行SQL语句
-	result, err := stmt.Exec(name)
+	result, err := stmt.Exec("22222", "Rose")
 	if err != nil {
 		panic(err.Error())
 	}
 
-	//获取受影响的行数
-	rowsAffected, err := result.RowsAffected()
+	affected, err := result.RowsAffected()
 	if err != nil {
 		panic(err.Error())
 	}
-	fmt.Printf("成功删除%d条记录\n", rowsAffected)
+	fmt.Printf("Updated %d rows\n", affected)
 
 	// 查看当前表中的所有记录
 	// 执行 SQL 语句，展示当前表的所有记录
