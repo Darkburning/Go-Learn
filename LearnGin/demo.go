@@ -6,6 +6,7 @@ import (
 	"github.com/thinkerou/favicon"
 	"net/http"
 	"path"
+	"time"
 )
 
 type UserInfo struct {
@@ -14,9 +15,27 @@ type UserInfo struct {
 	Userid   string `form:"userid" json:"userid"`
 }
 
+// 定义一个中间件, 规定中间件的返回值为func（*gin.context）也即gin.HandlerFunc
+func middleware() gin.HandlerFunc { // 通常写法：闭包
+	// 便于在返回之前执行一些查询数据库校验之类的准备工作
+	return func(context *gin.Context) { //匿名函数
+		start := time.Now()
+
+		context.Next() // 调用该请求的后续处理函数
+
+		//context.Abort() // 禁用该请求的后续处理函数,可用于验证失败
+
+		cost := time.Since(start)
+
+		fmt.Println("Cost:", cost)
+
+	}
+}
+
 func main() {
 	// 创建一个服务
-	r := gin.Default()
+	r := gin.Default() // 默认使用了Logger和Recovery中间件
+	//r := gin.New() 无默认中间件
 	// 添加一个icon
 	r.Use(favicon.New("./favicon.ico"))
 	// 修改文件上传的最大内存限制
@@ -25,6 +44,8 @@ func main() {
 	r.Static("/static", "./static") // HTML中所有以/static开头的文件都去demo.go同级目录下的static去找
 	// 加载静态页面
 	r.LoadHTMLGlob("templates/*")
+	// 全局注册中间件
+	//r.Use(middleware())
 
 	// 响应HTML页面
 	r.GET("/index", func(c *gin.Context) {
@@ -207,6 +228,9 @@ func main() {
 	})
 
 	shopGroup := r.Group("/shop")
+	// 为路由组创建中间件
+	//shopGroup := r.Group("/shop", middleware()) 或者用Use方法
+	shopGroup.Use(middleware())
 	{
 		shopGroup.GET("/check", func(context *gin.Context) {
 			context.JSON(http.StatusOK, gin.H{
@@ -232,6 +256,13 @@ func main() {
 			})
 		})
 	}
+
+	// 中间件
+	r.GET("/middleware", middleware(), func(context *gin.Context) {
+		context.Request.URL.Path = "/login"
+		r.HandleContext(context)
+	})
+
 	//服务器端口,注意冒号
 	r.Run(":8000") // listen and serve on "localhost:8000"
 }
