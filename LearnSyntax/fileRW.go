@@ -13,11 +13,11 @@ func main() {
 	//直到遇到换行符为止，读取到的内容包括换行符
 	reader := bufio.NewReader(os.Stdin)
 	content, err := reader.ReadString('\n')
-	if err != err {
+	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	//writeFile(content)
+	// writeFile(content)
 	appendFile(content)
 	readFile()
 }
