@@ -1,0 +1,24 @@
+mysql:
+  host: 127.0.0.1
+  port: 3306
+  db: qa
+  user: root
+  password: 123456
+  log_level: dev
+  configuration: parseTime=true # 加上才可以解析时间
+
+redis:
+  addr: 127.0.0.1
+  port: 6379
+  username: root
+  password: 123456
+  db: qa
+  poolSize: 10000
+
+logger:
+    level: info
+    show_line: true
+
+
+
+
