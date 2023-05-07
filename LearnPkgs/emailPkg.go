@@ -3,9 +3,9 @@ package main
 import (
 	"fmt"
 	"github.com/jordan-wright/email"
-	"log"
 	"math/rand"
 	"net/smtp"
+	"os"
 	"strings"
 	"time"
 )
@@ -47,6 +47,7 @@ func main() {
 	receiverEmail[0] = "1581690775@qq.com"
 	verifyCode, err := SendMailVerify(receiverEmail)
 	if err != nil {
-		log.Fatal(verifyCode)
+		fmt.Println(verifyCode)
+		os.Exit(1)
 	}
 }
