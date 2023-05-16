@@ -21,8 +21,10 @@ func main() {
 	appendFile(content)
 	readFile()
 }
+
 func appendFile(content string) {
 	for _, file := range os.Args[1:] {
+		// 文件设置为APPEND模式、没有文件则创建、只能写
 		f, err := os.OpenFile(file, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 		if err != nil {
 			fmt.Println(err)
@@ -39,6 +41,7 @@ func appendFile(content string) {
 	}
 
 }
+
 func writeFile(content string) {
 	// 依次读取命令行参数打开文件往里写入string对应的内容
 	for _, file := range os.Args[1:] {
