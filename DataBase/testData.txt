@@ -1,0 +1,27 @@
+// 定义新的用户数组
+var users = []USER{
+    {ID: 11, Username: "Kate", Password: "abc123"},
+    {ID: 12, Username: "Leo", Password: "def456"},
+    {ID: 13, Username: "Maggie", Password: "xyz789"},
+    {ID: 14, Username: "Nick", Password: "pqr432"},
+    {ID: 15, Username: "Olivia", Password: "jkl098"},
+    {ID: 16, Username: "Peter", Password: "mno765"},
+    {ID: 17, Username: "Queenie", Password: "rst321"},
+    {ID: 18, Username: "Rachel", Password: "uvw567"},
+    {ID: 19, Username: "Sam", Password: "ghi234"},
+    {ID: 20, Username: "Tom", Password: "lmn890"},
+}
+
+
+	user := []USER{
+		{ID: 1, Username: "Alice", Password: "weqsf123"},
+		{ID: 2, Username: "Bob", Password: "asddsa456"},
+		{ID: 3, Username: "Charlie", Password: "zxcgf654"},
+		{ID: 4, Username: "David", Password: "nbvdsr789"},
+		{ID: 5, Username: "Emma", Password: "yuiop432"},
+		{ID: 6, Username: "Frank", Password: "hjklp098"},
+		{ID: 7, Username: "Grace", Password: "vbnmlk765"},
+		{ID: 8, Username: "Henry", Password: "poiuyt321"},
+		{ID: 9, Username: "Isabel", Password: "qazxcv567"},
+		{ID: 10, Username: "Jason", Password: "mnbvcx234"},
+	}
