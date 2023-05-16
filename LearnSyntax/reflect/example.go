@@ -8,10 +8,14 @@ import (
 )
 
 func main() {
+	//反射进阶用法：
 	var mutex sync.Mutex
+	// sync.Mutex的接受者为指针接受者
 	typ := reflect.TypeOf(&mutex)
+	// 迭代这个struct的所有方法，拿到参数与返回值
 	for i := 0; i < typ.NumMethod(); i++ {
 		method := typ.Method(i)
+
 		argv := make([]string, 0, method.Type.NumIn())
 		returns := make([]string, 0, method.Type.NumOut())
 		// 第0个入参是本身

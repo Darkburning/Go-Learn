@@ -1,0 +1,26 @@
+syntax = "proto3";    //表示使用proto3
+
+option go_package = "./ProtoBuf/target;protos";   //指定protoc-gen-go生成的go包的名字和路径
+
+message Person {
+  string name = 1;
+  int32 id = 2;
+  string email = 3;
+
+  enum phoneType{
+    MOBILE = 0;
+    HOME = 1;
+    WORK = 2;
+  }
+
+  message phoneNumber{
+    string number = 1;
+    phoneType type = 2;
+  }
+
+  repeated phoneNumber phones = 4;
+}
+
+message AddressBook {
+  repeated Person people = 1;
+}

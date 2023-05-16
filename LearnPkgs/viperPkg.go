@@ -37,7 +37,7 @@ func Configuration() *Config {
 	}
 
 	// 设置需要读取的文件路径
-	viper.AddConfigPath("./")
+	viper.AddConfigPath("./global")
 	// 设置需要读取的文件名
 	viper.SetConfigName("config")
 	// 设置需要读取的文件类型
