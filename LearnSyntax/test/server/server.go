@@ -7,6 +7,8 @@ import (
 	"strconv"
 )
 
+// 利用http包简单的开启一个服务，获取表单值然后返回其值的两倍
+
 func main() {
 	http.HandleFunc("/double", doubleHandler)
 	log.Fatalln(http.ListenAndServe(":4000", nil))

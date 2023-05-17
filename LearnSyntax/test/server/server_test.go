@@ -45,18 +45,18 @@ func TestDoubleHandler(t *testing.T) {
 			}
 			defer res.Body.Close()
 
-			trimedResult := strings.TrimSpace(string(respBytes))
+			trimmedResult := strings.TrimSpace(string(respBytes))
 
 			if res.StatusCode != http.StatusOK {
 				// check the error message
-				if trimedResult != testCase.err {
-					t.Errorf("received error message %s, expect %s", trimedResult, testCase.err)
+				if trimmedResult != testCase.err {
+					t.Errorf("received error message %s, expect %s", trimmedResult, testCase.err)
 				}
 				return
 			}
 
 			// compare the returned value
-			doubleVal, err := strconv.Atoi(trimedResult)
+			doubleVal, err := strconv.Atoi(trimmedResult)
 			if err != nil {
 				t.Errorf("cannot convert response body to int, err: %v", err)
 				return
