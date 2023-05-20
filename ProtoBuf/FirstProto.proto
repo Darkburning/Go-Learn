@@ -1,6 +1,6 @@
 syntax = "proto3";    //表示使用proto3
 
-option go_package = "./ProtoBuf/target;protos";   //指定protoc-gen-go生成的go包的名字和路径
+option go_package = "./ProtoBuf/protos;protos";   //指定protoc-gen-go生成的go包的路径和名字
 
 message Person {
   string name = 1;

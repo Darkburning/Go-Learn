@@ -1,7 +1,7 @@
 package main
 
 import (
-	"Go_Learn/ProtoBuf/target"
+	"Go_Learn/ProtoBuf/protos"
 	"fmt"
 	"google.golang.org/protobuf/proto"
 	"log"
