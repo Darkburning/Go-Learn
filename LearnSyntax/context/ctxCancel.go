@@ -2,30 +2,25 @@ package main
 
 import (
 	"context"
-	"log"
+	"fmt"
 	"time"
 )
 
-func doSomething(ctx context.Context) {
-	// 通过select chan的方式来实现回撤请求，释放资源
+func startServer(ctx context.Context) {
 	select {
-	case <-time.After(2 * time.Second):
-		log.Println("finish doingSomething")
 	case <-ctx.Done():
-		err := ctx.Err()
-		log.Println(err.Error())
+		fmt.Println("Client Cancel!")
+	case <-time.After(time.Second * 2):
+		fmt.Println("Server Done Success")
 	}
+
 }
 
 func main() {
-	// 利用withCancel方法得到一个cancelFunction
-	ctx, cancel := context.WithCancel(context.Background())
 
-	// 可理解为用户等待一秒后取消
-	go func() {
-		time.Sleep(1 * time.Second)
-		cancel()
-	}()
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*1)
+	defer cancel()
 
-	doSomething(ctx)
+	startServer(ctx)
+
 }
