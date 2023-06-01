@@ -13,7 +13,7 @@ func handler(w http.ResponseWriter, req *http.Request) {
 	// 多路复用
 	called := make(chan struct{})
 	go func() {
-		time.Sleep(4 * time.Second)
+		time.Sleep(3 * time.Second)
 		called <- struct{}{}
 	}()
 

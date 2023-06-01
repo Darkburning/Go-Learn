@@ -12,6 +12,7 @@ type Student struct {
 func (s *Student) DoHomework(num int) {
 	fmt.Printf("%s is doing homework %d", s.name, num)
 }
+
 func main() {
 	s := Student{name: "Kali"}
 	v := reflect.ValueOf(&s)

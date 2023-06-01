@@ -58,7 +58,7 @@ func inspect(variable interface{}) {
 	} else if t.Kind() == reflect.Func {
 		fmt.Printf("this function has %d inputs and %d outputs\n", t.NumIn(), t.NumOut())
 	}
-	fmt.Printf("\n\n")
+	fmt.Printf("\n")
 }
 
 func main() {
