@@ -1,4 +1,4 @@
-package RpcDemo
+package main
 
 import (
 	"Go_Learn/RpcDemo/codec"

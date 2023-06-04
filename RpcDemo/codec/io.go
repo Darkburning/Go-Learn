@@ -47,7 +47,7 @@ func recvFrame(r io.Reader) (data []byte, err error) {
 	return data, nil
 }
 
-// 有了消息体长度下面的read、write即可处理粘包问题
+// 处理粘包问题
 func write(w io.Writer, data []byte) error {
 	for index := 0; index < len(data); {
 		n, err := w.Write(data[index:])

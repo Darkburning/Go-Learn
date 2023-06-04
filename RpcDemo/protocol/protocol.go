@@ -6,13 +6,11 @@ package protocol
 */
 
 type Request struct {
-	SeqNum uint32
 	Method string
 	Args   interface{}
 }
 
 type Response struct {
-	SeqNum  uint32
 	Err     string
 	Replies interface{}
 }
