@@ -100,43 +100,43 @@ func (s *Server) handleRequest(sc *codec.ServerCodec, req *protocol.Request, wg 
 // Register 将方法注册到pending[string]reflect.Value
 func (s *Server) Register(serviceName string, f interface{}) {
 	if _, ok := s.pending[serviceName]; ok {
-		log.Println("Already Registered!")
+		log.Println("rpc server: Already Registered!")
 		return
 	}
 
 	fVal := reflect.ValueOf(f)
 	if !fVal.IsValid() {
-		log.Println("Unable to add function to pending - invalid value")
+		log.Println("rpc server: Unable to add function to pending - invalid value")
 		return
 	}
 
 	s.pending[serviceName] = fVal
-	log.Printf("Function added to pending: %s", serviceName)
+	log.Printf("rpc server: Function added to pending: %s", serviceName)
 }
 
 func (s *Server) isMethodExists(method string) bool {
 	if _, ok := s.pending[method]; ok {
-		fmt.Printf("Method Exists\n")
+		fmt.Printf("rpc server: Method Exists\n")
 		return true
 	} else {
-		fmt.Printf("Method Not Exists\n")
+		fmt.Printf("rpc server: Method Not Exists\n")
 		return false
 	}
 }
 
 func (s *Server) call(serviceName string, inArgs []reflect.Value) ([]interface{}, error) {
 	if !s.isMethodExists(serviceName) {
-		return nil, errors.New("no Func Error")
+		return nil, errors.New("rpc server: no Func Error")
 	} else {
 		fmt.Printf("%v\n", inArgs)
 		returnValues := s.pending[serviceName].Call(inArgs)
-		fmt.Printf("server: Called Success!\n")
+		fmt.Printf("rpc server: Called Success!\n")
 
 		outArgs := make([]interface{}, 0, len(returnValues))
 		for _, ret := range returnValues {
 			outArgs = append(outArgs, ret.Interface())
 		}
-		fmt.Printf("Make outArgs Success!\n")
+		fmt.Printf("rpc server: Make outArgs Success!\n")
 		return outArgs, nil
 	}
 }

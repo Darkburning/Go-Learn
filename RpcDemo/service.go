@@ -17,12 +17,3 @@ func Product(args ...float64) float64 {
 	}
 	return product
 }
-
-//func Sum(arg1, arg2 float64) float64 {
-//	return arg1 + arg2
-//}
-//
-//func Product(arg1, arg2 float64) float64 {
-//
-//	return arg1 * arg2
-//}

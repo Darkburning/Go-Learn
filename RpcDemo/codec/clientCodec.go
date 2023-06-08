@@ -54,7 +54,7 @@ func (c *ClientCodec) WriteRequest(req *protocol.Request) {
 		log.Println("rpc client: clientCodec WriteRequest: " + err.Error())
 		return
 	}
-	fmt.Println("Request JSON:", string(reqBytes))
+	fmt.Println("rpc client: Request JSON:", string(reqBytes))
 
 	err = sendFrame(c.w, reqBytes)
 	if err != nil {
