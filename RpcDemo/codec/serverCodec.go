@@ -4,7 +4,6 @@ import (
 	"Go_Learn/RpcDemo/protocol"
 	"Go_Learn/RpcDemo/serializer"
 	"bufio"
-	"fmt"
 	"io"
 	"log"
 )
@@ -31,7 +30,7 @@ func (c *ServerCodec) ReadRequest() (*protocol.Request, error) {
 		log.Println("rpc server: serverCodec ReadRequest: " + err.Error())
 		return nil, err
 	}
-	fmt.Println("rpc server: ReadRequest JSON:", string(reqBytes))
+	log.Println("rpc server: ReadRequest JSON:", string(reqBytes))
 
 	err = c.serializer.Unmarshal(reqBytes, req)
 	if err != nil {

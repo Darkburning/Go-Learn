@@ -4,7 +4,6 @@ import (
 	"Go_Learn/RpcDemo/protocol"
 	"Go_Learn/RpcDemo/serializer"
 	"bufio"
-	"fmt"
 	"io"
 	"log"
 	"net"
@@ -54,7 +53,7 @@ func (c *ClientCodec) WriteRequest(req *protocol.Request) {
 		log.Println("rpc client: clientCodec WriteRequest: " + err.Error())
 		return
 	}
-	fmt.Println("rpc client: Request JSON:", string(reqBytes))
+	log.Println("rpc client: Request JSON:", string(reqBytes))
 
 	err = sendFrame(c.w, reqBytes)
 	if err != nil {

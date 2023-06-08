@@ -3,7 +3,6 @@ package main
 import (
 	"Go_Learn/RpcDemo/codec"
 	"Go_Learn/RpcDemo/protocol"
-	"errors"
 	"fmt"
 	"log"
 	"net"
@@ -14,6 +13,13 @@ import (
 type Client struct {
 	clientCodec *codec.ClientCodec
 	sending     *sync.Mutex
+}
+
+func NewClient(conn net.Conn) *Client {
+	return &Client{
+		clientCodec: codec.NewClientCodec(conn),
+		sending:     new(sync.Mutex),
+	}
 }
 
 func (c *Client) Close() error {
@@ -37,12 +43,12 @@ func (c *Client) Call(method string, args ...interface{}) []interface{} {
 			log.Println("rpc client: client receive: " + err.Error())
 		}
 		if resp.Err != "" {
-			log.Println("rpc client: client receive: " + err.Error())
+			log.Println("rpc client: client receive: " + resp.Err)
 			return nil
 		} else {
-			fmt.Printf("client call success!\n")
+			log.Printf("rpc client: client call success!\n")
 			for idx, reply := range resp.Replies {
-				fmt.Printf("Value %d is : %v\n", idx, reply)
+				log.Printf("Value %d is : %v\n", idx, reply)
 			}
 			return resp.Replies
 		}
@@ -64,17 +70,15 @@ func Dial(network string, addr string) (*Client, error) {
 		// 创建子协程，创建一个客户端
 		ch := make(chan *Client)
 		go func() {
-			ch <- &Client{
-				clientCodec: codec.NewClientCodec(conn),
-				sending:     new(sync.Mutex),
-			}
+			//time.Sleep(time.Second * 4) for test
+			ch <- NewClient(conn)
 		}()
 
 		// select多路复用处理阻塞IO，在两个信道上监听
 		select {
-		case <-time.After(timeOutLimit): // New Client Timeout
-			return nil, errors.New("rpc client: dial timeout: expect within 5s")
-		case result := <-ch: // New Client Success
+		case <-time.After(timeOutLimit):
+			return nil, fmt.Errorf("rpc client: new client timeout: expect within %v", timeOutLimit)
+		case result := <-ch:
 			return result, nil
 		}
 

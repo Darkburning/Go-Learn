@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-const timeOutLimit = time.Second * 5
+const timeOutLimit = time.Second * 3
 
 type Server struct {
 	sending *sync.Mutex              // 保证线程安全
@@ -90,7 +90,7 @@ func (s *Server) handleRequest(sc *codec.ServerCodec, req *protocol.Request, wg 
 
 	select {
 	case <-time.After(timeOutLimit):
-		errMsg := errors.New("rpc server: request handle timeout: expect within 5s")
+		errMsg := fmt.Errorf("rpc server: handleRequest timeout: expect within %v", timeOutLimit)
 		sc.WriteResponse(errMsg, nil)
 	case <-called:
 		<-sent
@@ -116,10 +116,10 @@ func (s *Server) Register(serviceName string, f interface{}) {
 
 func (s *Server) isMethodExists(method string) bool {
 	if _, ok := s.pending[method]; ok {
-		fmt.Printf("rpc server: Method Exists\n")
+		log.Printf("rpc server: Method Exists\n")
 		return true
 	} else {
-		fmt.Printf("rpc server: Method Not Exists\n")
+		log.Printf("rpc server: Method Not Exists\n")
 		return false
 	}
 }
@@ -128,15 +128,15 @@ func (s *Server) call(serviceName string, inArgs []reflect.Value) ([]interface{}
 	if !s.isMethodExists(serviceName) {
 		return nil, errors.New("rpc server: no Func Error")
 	} else {
-		fmt.Printf("%v\n", inArgs)
+		log.Printf("%v\n", inArgs)
 		returnValues := s.pending[serviceName].Call(inArgs)
-		fmt.Printf("rpc server: Called Success!\n")
+		log.Printf("rpc server: Called Success!\n")
 
 		outArgs := make([]interface{}, 0, len(returnValues))
 		for _, ret := range returnValues {
 			outArgs = append(outArgs, ret.Interface())
 		}
-		fmt.Printf("rpc server: Make outArgs Success!\n")
+		log.Printf("rpc server: Make outArgs Success!\n")
 		return outArgs, nil
 	}
 }
