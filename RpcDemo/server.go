@@ -2,13 +2,18 @@ package main
 
 import (
 	"Go_Learn/RpcDemo/codec"
+	"Go_Learn/RpcDemo/protocol"
 	"errors"
+	"fmt"
 	"io"
 	"log"
 	"net"
 	"reflect"
 	"sync"
+	"time"
 )
+
+const timeOutLimit = time.Second * 5
 
 type Server struct {
 	sending *sync.Mutex              // 保证线程安全
@@ -31,14 +36,14 @@ func (s *Server) serveCodec(sc *codec.ServerCodec) {
 		req, err := sc.ReadRequest()
 		if err != nil {
 			if req == nil {
-				break // 尽力而为只有在header解析失败才终止循环
+				break
 			}
 			// 发送读取错误的报文
-			sc.WriteResponse(err, errors.New("error When ReadRequest"))
+			sc.WriteResponse(err, nil)
 			continue
 		}
-		wg.Add(1) // 需等待的协程+1
-		//go s.handleRequest(sc, req, s.sending, wg) // 利用协程并发处理请求
+		wg.Add(1)                       // 需等待的协程+1
+		go s.handleRequest(sc, req, wg) // 利用协程并发处理请求
 	}
 	wg.Wait() // 等待所有请求的处理结束
 	_ = sc.Close()
@@ -57,38 +62,42 @@ func (s *Server) ServeConn(conn io.ReadWriteCloser) {
 	s.serveCodec(serverCodec)
 }
 
-//func (s *Server) handleRequest(sc *codec.ServerCodec, req *protocol.Request, wg *sync.WaitGroup) {
-//	defer wg.Done()
-//	called := make(chan struct{})
-//	sent := make(chan struct{})
-//
-//	go func() {
-//		svc := s.pending[req.Method]
-//		// 根据req获取入参列表
-//
-//		svc.Call(inArgs)
-//		called <- struct{}{}
-//		if err != nil {
-//			req.h.Error = err.Error()
-//			s.WriteResponse()
-//			sent <- struct{}{}
-//			return
-//		}
-//		// 发送响应报文
-//		sc.WriteResponse(cc, req.h, req.replyv.Interface(), sending)
-//		sent <- struct{}{}
-//	}()
-//
-//	select {
-//	case <-time.After(time.Second * 5):
-//		req.h.Error = fmt.Sprintf("rpc server: request handle timeout: expect within 5s")
-//		s.WriteResponse(cc, req.h, invalidRequest, sending)
-//	case <-called:
-//		<-sent
-//	}
-//}
+// handleRequest 根据请求读取入参并调用方法得到出参然后返回数据
+func (s *Server) handleRequest(sc *codec.ServerCodec, req *protocol.Request, wg *sync.WaitGroup) {
+	defer wg.Done()
+	called := make(chan struct{}) // 调用超时
+	sent := make(chan struct{})   // 回复超时
 
-// Register 传入结构体将其内所有方法注册到pending[string]reflect.Value
+	go func() {
+		inArgs := make([]reflect.Value, 0, len(req.Args))
+		for _, arg := range req.Args {
+			argVal := reflect.ValueOf(arg)
+			inArgs = append(inArgs, argVal)
+			fmt.Printf("%v\t", argVal.Interface())
+		}
+
+		outArgs, err := s.call(req.Method, inArgs)
+		called <- struct{}{}
+		if err != nil {
+			sc.WriteResponse(err, nil)
+			sent <- struct{}{}
+			return
+		}
+		// 发送响应报文
+		sc.WriteResponse(nil, outArgs)
+		sent <- struct{}{}
+	}()
+
+	select {
+	case <-time.After(timeOutLimit):
+		errMsg := errors.New("rpc server: request handle timeout: expect within 5s")
+		sc.WriteResponse(errMsg, nil)
+	case <-called:
+		<-sent
+	}
+}
+
+// Register 将方法注册到pending[string]reflect.Value
 func (s *Server) Register(serviceName string, f interface{}) {
 	if _, ok := s.pending[serviceName]; ok {
 		log.Println("Already Registered!")
@@ -96,23 +105,39 @@ func (s *Server) Register(serviceName string, f interface{}) {
 	}
 
 	fVal := reflect.ValueOf(f)
-	s.pending[serviceName] = fVal
+	if !fVal.IsValid() {
+		log.Println("Unable to add function to pending - invalid value")
+		return
+	}
 
+	s.pending[serviceName] = fVal
+	log.Printf("Function added to pending: %s", serviceName)
 }
 
 func (s *Server) isMethodExists(method string) bool {
 	if _, ok := s.pending[method]; ok {
+		fmt.Printf("Method Exists\n")
 		return true
 	} else {
+		fmt.Printf("Method Not Exists\n")
 		return false
 	}
 }
 
-func (s *Server) call(serviceName string, inArgs []reflect.Value) []reflect.Value {
+func (s *Server) call(serviceName string, inArgs []reflect.Value) ([]interface{}, error) {
 	if !s.isMethodExists(serviceName) {
-		return nil
+		return nil, errors.New("no Func Error")
 	} else {
-		return s.pending[serviceName].Call(inArgs)
+		fmt.Printf("%v\n", inArgs)
+		returnValues := s.pending[serviceName].Call(inArgs)
+		fmt.Printf("server: Called Success!\n")
+
+		outArgs := make([]interface{}, 0, len(returnValues))
+		for _, ret := range returnValues {
+			outArgs = append(outArgs, ret.Interface())
+		}
+		fmt.Printf("Make outArgs Success!\n")
+		return outArgs, nil
 	}
 }
 

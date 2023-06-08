@@ -1,9 +1,12 @@
 package codec
 
 import (
+	"Go_Learn/RpcDemo/protocol"
 	"Go_Learn/RpcDemo/serializer"
 	"bufio"
+	"fmt"
 	"io"
+	"log"
 	"net"
 )
 
@@ -23,29 +26,43 @@ func NewClientCodec(conn net.Conn) *ClientCodec {
 	}
 }
 
-// 实现ReadRespHeader、ReadRespBody、WriteReq、Close
-
-func (c *ClientCodec) ReadResponse() {
+func (c *ClientCodec) ReadResponse() (*protocol.Response, error) {
+	resp := new(protocol.Response)
+	byteResp, err := recvFrame(c.r)
+	if err != nil {
+		log.Println("rpc client: clientCodec ReadResponse: " + err.Error())
+		return nil, err
+	}
+	err = c.serializer.Unmarshal(byteResp, resp)
+	if err != nil {
+		log.Println("rpc client: clientCodec ReadResponse: " + err.Error())
+		return nil, err
+	}
+	return resp, nil
 
 }
-func (c *ClientCodec) WriteRequest() {
+func (c *ClientCodec) WriteRequest(req *protocol.Request) {
 	defer func(w *bufio.Writer) {
 		err := w.Flush()
 		if err != nil {
-
+			log.Println("rpc client: clientCodec WriteRequest: " + err.Error())
 		}
 	}(c.w)
-	msg := "Hello world!"
-	byteMsg, err := c.serializer.Marshal(msg)
-	if err != nil {
 
-	}
-	err = sendFrame(c.w, byteMsg)
+	reqBytes, err := c.serializer.Marshal(req)
 	if err != nil {
+		log.Println("rpc client: clientCodec WriteRequest: " + err.Error())
+		return
+	}
+	fmt.Println("Request JSON:", string(reqBytes))
+
+	err = sendFrame(c.w, reqBytes)
+	if err != nil {
+		log.Println("rpc client: clientCodec WriteRequest: " + err.Error())
 		return
 	}
 
 }
-func (c *ClientCodec) Close() {
-
+func (c *ClientCodec) Close() error {
+	return c.conn.Close()
 }

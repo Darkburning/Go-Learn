@@ -1,16 +1,16 @@
 package protocol
 
 /*
-	Request包含序列号、方法名和参数
-	Response包含序列号、错误信息和返回值
+	Request包含方法名和参数
+	Response包含错误信息和返回值
 */
 
 type Request struct {
-	Method string
-	Args   interface{}
+	Method string        `json:"method"`
+	Args   []interface{} `json:"args"`
 }
 
 type Response struct {
-	Err     string
-	Replies interface{}
+	Err     string        `json:"err"`
+	Replies []interface{} `json:"replies"`
 }
