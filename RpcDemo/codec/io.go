@@ -6,7 +6,7 @@ import (
 	"net"
 )
 
-// 将Header和Body封装成Frame再发送，避免粘包
+// 将信息封装成Frame再发送，避免粘包
 
 func sendFrame(w io.Writer, data []byte) (err error) {
 	var size [binary.MaxVarintLen64]byte
