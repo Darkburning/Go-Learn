@@ -19,7 +19,7 @@ const (
 	PASSWORD = "123456"
 	HOST     = "127.0.0.1"
 	PORT     = "3306"
-	DBNAME   = "douban_movie"
+	DBNAME   = "spider"
 )
 
 type MovieData struct {
@@ -46,7 +46,7 @@ func ChannelStart(ch chan struct{}, db *gorm.DB) {
 	// 除同步goroutine外还可以传递数据
 	start := time.Now()
 	for i := 0; i < 10; i++ {
-		go Spider(strconv.Itoa(i*25), ch, db)
+		go SpiderDoubanMovie(strconv.Itoa(i*25), ch, db)
 	}
 	for i := 0; i < 10; i++ {
 		<-ch
@@ -58,7 +58,7 @@ func ChannelStart(ch chan struct{}, db *gorm.DB) {
 func NormalStart(db *gorm.DB) {
 	start := time.Now()
 	for i := 0; i < 10; i++ {
-		Spider(strconv.Itoa(i*25), nil, db)
+		SpiderDoubanMovie(strconv.Itoa(i*25), nil, db)
 	}
 	elapsed := time.Since(start)
 	fmt.Printf("NormalStart Time %s \n", elapsed)
@@ -72,7 +72,7 @@ func WaitGroupStart(db *gorm.DB) {
 	for i := 0; i < 10; i++ {
 		go func(i int) {
 			defer wg.Done()
-			Spider(strconv.Itoa(i*25), nil, db)
+			SpiderDoubanMovie(strconv.Itoa(i*25), nil, db)
 		}(i)
 	}
 	wg.Wait()
@@ -80,7 +80,7 @@ func WaitGroupStart(db *gorm.DB) {
 	fmt.Printf("WaitGroupStart Time %s\n", elapsed)
 }
 
-func Spider(page string, ch chan struct{}, db *gorm.DB) {
+func SpiderDoubanMovie(page string, ch chan struct{}, db *gorm.DB) {
 	// 1. 新建客户端发起请求
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", "https://movie.douban.com/top250?start="+page, nil)
